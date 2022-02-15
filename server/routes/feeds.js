@@ -1,11 +1,15 @@
 import express from "express";
-import { getAllDetails, addDetail } from "../controllers/feeds.js";
+import { getAllFeeds, addFeed, getFeed, updateFeed, deleteFeed } from "../controllers/feeds.js";
 
 
 
 const router = express.Router();
 
-router.get("", getAllDetails);
-router.post("", addDetail);
+router.get("/", getAllFeeds);
+router.post("/", addFeed);
+router.get("/:id", getFeed);
+router.patch("/:id", updateFeed);
+router.delete("/:id", deleteFeed);
+
 
 export default router;

@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
 
-const feedSchema = mongoose.Schema({
-    firstName: {
+const feedSchema = new mongoose.Schema({
+    feedUrl: {
         type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
+        default: "",
         required: true
     }
 }, {timestamps: true});
