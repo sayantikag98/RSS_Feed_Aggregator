@@ -32,7 +32,7 @@ export const getFeed = async (req, res) => {
             if(!response) res.send(`No such feed with id ${id} exists in the database`);
             else res.send(response);
         }
-        else res.send("Invalid ObjectId");
+        else res.status(400).send("Invalid ObjectId");
     }
     catch(err){
         console.log(err.message);
@@ -47,7 +47,7 @@ export const updateFeed = async (req, res) => {
             if(!response) res.send(`No such feed with id ${id} exists in the database`);
             else res.send(`Feed with id ${id} updated in the database`);
         }
-        else res.send("Invalid ObjectId");
+        else res.status(400).send("Invalid ObjectId");
     }
     catch(err){
         console.log(err.message);
@@ -62,7 +62,7 @@ export const deleteFeed = async (req, res) => {
             if(!response) res.send(`No such feed with id ${id} exists in the database`);
             else res.send(`Feed with id ${id} deleted from the database`);
         }
-        else res.send("Invalid ObjectId"); 
+        else res.status(400).send("Invalid ObjectId"); 
     }
     catch(err){
         console.log(err.message);

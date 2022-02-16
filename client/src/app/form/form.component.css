@@ -1,0 +1,15 @@
+#input-form{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    margin: auto;
+    border: 0.5px solid gainsboro;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#submit-btn{
+    width: 30%;
+    margin: auto;
+    font-size: larger;
+}

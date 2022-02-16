@@ -1,0 +1,38 @@
+<div id="input-form">
+    <mat-form-field appearance="fill">
+        <mat-label>First Name</mat-label>
+        <input matInput required>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Last Name</mat-label>
+        <input matInput required>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Department</mat-label>
+        <input matInput required>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Gender</mat-label>
+        <mat-select required>
+        <mat-option value="Male">Male</mat-option>
+        <mat-option value="Female">Female</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Enter your email</mat-label>
+        <input matInput placeholder="sampleemail@example.com" [formControl]="email" required>
+        <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Hire Date</mat-label>
+        <input matInput type="date" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Salary</mat-label>
+        <input matInput type="number" required>
+    </mat-form-field>
+    <button id="submit-btn">Submit</button>
+</div>
+
+
+
