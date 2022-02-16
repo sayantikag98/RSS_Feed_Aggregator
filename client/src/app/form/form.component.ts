@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl, FormGroup, FormBuilder, Validators} from '@angular/forms';
+import axios from 'axios';
 
 @Component({
   selector: 'app-form',
@@ -8,20 +9,28 @@ import {FormControl, Validators} from '@angular/forms';
 })
 
 export class FormComponent implements OnInit {
+  newFeedForm !: FormGroup;
 
-  constructor() { }
+  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    this.newFeedForm = this.formBuilder.group({
+      feedUrl: ["", Validators.required]
+    });
   }
 
-  email = new FormControl('', [Validators.required, Validators.email]);
-
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
+  async addFeed(){
+    try{
+      console.log(this.newFeedForm.value);
+      const response = await axios.post("http://localhost:3000/", this.newFeedForm.value);
+      if(response.status === 200)
+        console.log("Feed url successfully added to the database");
+      else
+        console.log("ERROR!! Feed url cannot be added to the database");
     }
-
-    return this.email.hasError('email') ? 'Not a valid email' : '';
+    catch(err){
+      console.log(err);
+    }
   }
 
 }
