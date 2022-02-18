@@ -4,6 +4,10 @@
   </mat-toolbar>
 </p>
 
-<app-form></app-form>
-<!-- <app-table></app-table>
-<app-list></app-list> -->
+
+<div id="main-div"> 
+  <app-table id="table-component" (newInput)="feedUpdate($event)"></app-table>
+  <app-list id="list-component"></app-list>
+  <app-form id="form-component" [newFeed]="presentFeed"></app-form>
+</div>
+

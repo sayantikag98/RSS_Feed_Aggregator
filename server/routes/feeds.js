@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", getAllFeeds);
 router.post("/", addFeed);
 router.get("/:id", getFeed);
-router.patch("/:id", updateFeed);
+router.put("/:id", updateFeed);
 router.delete("/:id", deleteFeed);
 
 

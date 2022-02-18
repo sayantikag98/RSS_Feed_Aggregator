@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 export const getAllFeeds = async (req, res) => {
     try{
         const response = await Feeds.find();
-        if(!response.length) res.send("No feed present");
-        else res.send(response);
+        // if(!response.length) res.send("No feed present");
+        res.send(response);
     }
     catch(err){
         console.log(err.message);
@@ -43,7 +43,7 @@ export const updateFeed = async (req, res) => {
     try{
         const id = req.params.id;
         if(mongoose.Types.ObjectId.isValid(id)){
-            const response = await Feeds.findByIdAndUpdate(id, req.body);
+            const response = await Feeds.findByIdAndUpdate(id, req.body, {new:true});
             if(!response) res.send(`No such feed with id ${id} exists in the database`);
             else res.send(`Feed with id ${id} updated in the database`);
         }
