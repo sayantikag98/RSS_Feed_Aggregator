@@ -1,15 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { TableComponent } from '../table/table.component';
+import axios from 'axios';
 
 @Component({
+  providers: [TableComponent],
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit {
+export class ListComponent implements OnInit{
+  data:any;
 
-  constructor() { }
+  constructor(private tableComp: TableComponent) { }
 
-  ngOnInit(): void {
+  async getData (){
+    const response = await axios.get("http://localhost:3000/");
+    this.data = response.data;
+    this.data = this.data.map((ele:any) => ele = ele.feedUrl);
   }
 
+  ngOnInit(): void {
+    this.getData();
+  }
+
+  
+
+  displayFeed(){ 
+    console.log(this.data);
+  }
 }

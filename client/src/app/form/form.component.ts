@@ -25,6 +25,7 @@ export class FormComponent implements OnInit, OnChanges {
     this.newFeedForm = this.formBuilder.group({
       feedUrl: ["", Validators.required]
     });
+    // this.tableComp.ngOnInit();
   }
   
 
@@ -47,7 +48,8 @@ export class FormComponent implements OnInit, OnChanges {
             console.log(res);
             alert("Feed added successfully to the database");
             this.newFeedForm.reset();
-            this.tableComp.getAllFeeds1();
+            this.tableComp.ngOnInit();
+            console.log(this.tableComp.dataSource.data.length);
           },
           error: () => {
             alert("Error!!! Feed cannot be added to the database");
@@ -64,7 +66,7 @@ export class FormComponent implements OnInit, OnChanges {
             alert("Feed updated successfully in the database");
             this.newFeedForm.reset();
             this.actionBtn = "Create";
-            this.tableComp.getAllFeeds1();
+            this.tableComp.ngOnInit();
           },
           error: () => {
             alert("Error!!! Feed cannot be updated in the database");

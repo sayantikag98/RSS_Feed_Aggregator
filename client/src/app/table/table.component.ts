@@ -1,25 +1,26 @@
-import {Component, OnInit, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, } from '@angular/core';
+import {Component, OnInit, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import { ApiService } from '../services/api.service';
 import {MatTableDataSource} from '@angular/material/table';
-import { Feed } from '../feed.model';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.css']
+  styleUrls: ['./table.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent implements OnInit, OnChanges {
   isEmpty!: boolean;
   displayedColumns: string[] = ['feedUrl', 'action']; // naming same as defined in the schema
   dataSource: any;
+  feedList: any;
   @Output() newInput = new EventEmitter<any>();
 
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  constructor(private api:ApiService) { }
+  constructor(private api:ApiService, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
       this.getAllFeeds1();
@@ -29,6 +30,7 @@ export class TableComponent implements OnInit, OnChanges {
     this.getAllFeeds1();
     this.dataSource;
     this.isEmpty;
+    this.feedList;
   }
 
   getAllFeeds1(){
@@ -37,8 +39,11 @@ export class TableComponent implements OnInit, OnChanges {
           next: (data) => {
                 this.dataSource = new MatTableDataSource();
                 this.dataSource.data = data;
+                this.feedList = data;
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
+                this.cd.detectChanges();
+                // this.ngOnInit();
             },
           error: () => {
             console.log("Error in getting all the feeds");
@@ -48,6 +53,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   editFeed(data: any){
     this.newInput.emit(data);
+    
 
   }
 
@@ -56,7 +62,7 @@ export class TableComponent implements OnInit, OnChanges {
     .subscribe({
       next: res => {
         console.log("Feed deleted from database");
-        this.getAllFeeds1();
+        this.ngOnInit();
       },
       error: () => {
         console.log("Error!!! Feed cannot be deleted from database");
