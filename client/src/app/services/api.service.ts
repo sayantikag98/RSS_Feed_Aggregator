@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,5 +23,17 @@ export class ApiService {
 
   deleteFeed(id:any){
     return this.http.delete(`http://localhost:3000/${id}`, {responseType: 'text'});
+  }
+
+  getFeedDetails(){
+    return this.http.get("http://localhost:3000/details/");
+  }
+
+  postFeedDetail(data: any){
+    return this.http.post("http://localhost:3000/details/", data, {responseType: 'text'});
+  }
+
+  deleteAllFeedDetails(id: any){
+    return this.http.delete(`http://localhost:3000/details/${id}`, {responseType: 'text'});
   }
 }

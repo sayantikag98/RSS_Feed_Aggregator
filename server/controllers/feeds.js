@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 export const getAllFeeds = async (req, res) => {
     try{
         const response = await Feeds.find();
-        // if(!response.length) res.send("No feed present");
         res.send(response);
     }
     catch(err){
@@ -21,7 +20,6 @@ export const addFeed = async (req, res) => {
     catch(err){
         console.log(err.message);
     }
-
 }
 
 export const getFeed = async (req, res) => {

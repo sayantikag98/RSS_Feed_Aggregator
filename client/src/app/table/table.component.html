@@ -7,7 +7,7 @@
     </mat-form-field>
       
     <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort>
+        <table id="feed-url-display-table" mat-table [dataSource]="dataSource" matSort>
             <!-- Id Column -->
             <ng-container style="display: none;" matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
@@ -46,15 +46,13 @@
             <td class="mat-cell" colspan="4">No feed data</td>
             </tr>
         </table>
-
-        
     
         <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
         <mat-paginator #paginator [length]="feedList && feedList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]">
         </mat-paginator>
     </div>
-
 </div>
+
 
 
 

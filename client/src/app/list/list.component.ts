@@ -1,31 +1,161 @@
-import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { TableComponent } from '../table/table.component';
-import axios from 'axios';
+import { ApiService } from '../services/api.service';
+import { Detail } from '../detail.model';
+import { mergeMap } from 'rxjs';
+
+import * as $ from 'jquery';
+
+
 
 @Component({
-  providers: [TableComponent],
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit{
-  data:any;
+export class ListComponent implements OnInit, AfterViewInit{
+  
 
-  constructor(private tableComp: TableComponent) { }
+  data:any= [];
+  feedDetails: any= [];
+  objList:any = [];
 
-  async getData (){
-    const response = await axios.get("http://localhost:3000/");
-    this.data = response.data;
-    this.data = this.data.map((ele:any) => ele = ele.feedUrl);
-  }
 
-  ngOnInit(): void {
-    this.getData();
-  }
+  @Input() tablecomp: TableComponent;
+  @ViewChild('detailbtn') detailbtn:ElementRef;
 
   
 
-  displayFeed(){ 
-    console.log(this.data);
+  constructor(private api: ApiService) {
   }
+
+  
+  ngOnInit(): void {
+    this.getFeedDetails();
+  }
+
+  ngAfterViewInit(){
+    setInterval(()=>{
+      this.detailbtn.nativeElement.click();
+    },5000);
+    
+  }
+
+  getDiffArray(arr1: any, arr2: any){
+    return arr1.filter((ele:any) => !arr2.some((ele1: any) => ele.feedTitle === ele1.feedTitle));
+  }
+
+  getData(feedUrl: string){
+    const thisComp = this;
+    $.ajax(feedUrl, {
+      async: false,
+      accepts: {
+        xml: "application/rss+xml"
+      },
+    
+      dataType: "xml",
+      success: function(data) {
+       const feedAuthor = $(data).find("channel").children("title").text();
+       
+        $(data).find("item").each(function() {
+            const el = $(this), feedTitle = $(el).find("title").text(), 
+            feedDate = new Date(el.find("pubDate").text()).toLocaleString(), feedDescription = $(el).find("description").text(),
+            obj = {feedDate, feedTitle, feedAuthor, feedDescription, feedUrl};
+            thisComp.objList.push(obj);   
+          });
+
+      },
+      error: function(){
+        alert("Please check the feed url");
+      }
+    });
+  }
+
+
+  compare(a:any, b:any){
+    return (a.feedDate >= b.feedDate) ? 1 : -1;
+  }
+
+  getFeedDetails(){
+    this.api.getFeedDetails()
+    .subscribe(res => {
+      this.feedDetails = res;
+      this.displayFeed();
+    })
+  }
+
+  renderContent(){
+    const listDiv = document.getElementById("list-comp-div");
+    listDiv?.lastElementChild?.setAttribute("style", "display:block");
+    const feedDiv = document.getElementById("feed-detail-div");
+    if(feedDiv !== null) feedDiv.remove();
+    this.objList = this.objList.sort((a:Detail, b:Detail) => {
+      return Date.parse(b.feedDate) - Date.parse(a.feedDate);
+    });
+    const feedDetailEle = document.createElement("div");
+    feedDetailEle.id = "feed-detail-div";
+    feedDetailEle.style.margin = "30px";
+    this.objList.forEach((ele: any) => {
+                const template = `
+                    <article>
+                      <h1>${ele.feedTitle}</h1>
+                      <h2>${ele.feedAuthor}</h2>
+                      <a href="${ele.feedUrl}" target="_blank">${ele.feedUrl}</a>
+                      <h4>${ele.feedDate}</h4>
+                      <p>${ele.feedDescription}</p>
+                      <hr>
+                      <br>
+                    </article>
+                  `;
+                  feedDetailEle.insertAdjacentHTML("beforeend", template);
+              });
+    
+    listDiv?.lastElementChild?.setAttribute("style", "display:none");
+    document.body.insertAdjacentElement("beforeend", feedDetailEle);
+    
+    
+  }
+
+
+  displayFeed(){ 
+    if(this.tablecomp.dataSource.data) this.data = this.tablecomp.dataSource.data.map((ele:any) => ele = ele.feedUrl);
+    this.objList = [];
+    
+    if(this.data.length) this.data.forEach( (urlItem: string) => {
+      this.getData(urlItem); 
+    });
+
+    else this.objList = [];
+
+
+    this.renderContent();
+
+
+    // diff1 is the feed detail stored in the database
+    const diff1 = this.getDiffArray(this.feedDetails, this.objList); // feed details not to be included
+    //diff2 is the updated data obtained after parsing the current feed urls
+    const diff2 = this.getDiffArray(this.objList, this.feedDetails); // feed details to be included
+
+
+    if(diff2.length){
+      diff2.forEach((ele: any) => {
+        this.api.postFeedDetail(ele)
+        .subscribe(() => {});
+      }) 
+    }
+
+    if(diff1.length){
+      diff1.forEach((ele: any) => {
+        this.api.deleteAllFeedDetails(ele._id)
+        .subscribe(()=>{});
+      })
+    }
+    
+
+    
+
+    
+  }
+
+  
 }
